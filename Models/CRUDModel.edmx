@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="CodingChallengeV4.Models.ContactContextModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Contacts">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FirstName" Type="nvarchar(max)" />
+          <Property Name="LastName" Type="nvarchar(max)" />
+          <Property Name="EmailAddress_ID" Type="int" />
+        </EntityType>
+        <EntityType Name="EmailAddresses">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EmailAddress" Type="nvarchar(max)" />
+          <Property Name="EmailType" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_dbo_Contacts_dbo_EmailAddresses_EmailAddress_ID">
+          <End Role="EmailAddresses" Type="Self.EmailAddresses" Multiplicity="0..1" />
+          <End Role="Contacts" Type="Self.Contacts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EmailAddresses">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Contacts">
+              <PropertyRef Name="EmailAddress_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="CodingChallengeV4ModelsContactContextModelStoreContainer">
+          <EntitySet Name="Contacts" EntityType="Self.Contacts" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EmailAddresses" EntityType="Self.EmailAddresses" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_dbo_Contacts_dbo_EmailAddresses_EmailAddress_ID" Association="Self.FK_dbo_Contacts_dbo_EmailAddresses_EmailAddress_ID">
+            <End Role="EmailAddresses" EntitySet="EmailAddresses" />
+            <End Role="Contacts" EntitySet="Contacts" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="CodingChallengeV4.Models.ContactContextModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Contact">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="EmailAddress_ID" Type="Int32" />
+          <NavigationProperty Name="EmailAddress" Relationship="Self.FK_dbo_Contacts_dbo_EmailAddresses_EmailAddress_ID" FromRole="Contacts" ToRole="EmailAddresses" />
+        </EntityType>
+        <EntityType Name="EmailAddress">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EmailAddress1" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="EmailType" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Contacts" Relationship="Self.FK_dbo_Contacts_dbo_EmailAddresses_EmailAddress_ID" FromRole="EmailAddresses" ToRole="Contacts" />
+        </EntityType>
+        <Association Name="FK_dbo_Contacts_dbo_EmailAddresses_EmailAddress_ID">
+          <End Role="EmailAddresses" Type="Self.EmailAddress" Multiplicity="0..1" />
+          <End Role="Contacts" Type="Self.Contact" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EmailAddresses">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Contacts">
+              <PropertyRef Name="EmailAddress_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Contacts" EntityType="Self.Contact" />
+          <EntitySet Name="EmailAddresses" EntityType="Self.EmailAddress" />
+          <AssociationSet Name="FK_dbo_Contacts_dbo_EmailAddresses_EmailAddress_ID" Association="Self.FK_dbo_Contacts_dbo_EmailAddresses_EmailAddress_ID">
+            <End Role="EmailAddresses" EntitySet="EmailAddresses" />
+            <End Role="Contacts" EntitySet="Contacts" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="CodingChallengeV4ModelsContactContextModelStoreContainer" CdmEntityContainer="Entities">
+          <EntitySetMapping Name="Contacts">
+            <EntityTypeMapping TypeName="CodingChallengeV4.Models.ContactContextModel.Contact">
+              <MappingFragment StoreEntitySet="Contacts">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="EmailAddress_ID" ColumnName="EmailAddress_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EmailAddresses">
+            <EntityTypeMapping TypeName="CodingChallengeV4.Models.ContactContextModel.EmailAddress">
+              <MappingFragment StoreEntitySet="EmailAddresses">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="EmailAddress1" ColumnName="EmailAddress" />
+                <ScalarProperty Name="EmailType" ColumnName="EmailType" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
