@@ -16,9 +16,7 @@ namespace CodingChallengeV4.Models
     {
         public int ID { get; set; }
         public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public Nullable<int> EmailAddress_ID { get; set; }
-    
+        public string LastName { get; set; }    
         public virtual EmailAddress EmailAddress { get; set; }
     }
 }

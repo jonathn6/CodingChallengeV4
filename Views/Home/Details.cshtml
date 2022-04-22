@@ -1,0 +1,66 @@
+﻿@model List<CodingChallengeV4.ViewModels.ContactPassData>
+
+@foreach (var record in Model)
+{
+
+    <h2>Update @record.passedfName&nbsp;@record.passedlName</h2>
+    <div class="col-md-12">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <div class="col-md-12">
+                <label id="lblFirstName">Contact First Name</label>
+                <input class="form-control" type="text" id="txtID" value="@record.passedID" />
+            </div>
+            <div class="col-md-12">
+                <label id="lblFirstName">Contact First Name</label>
+                <input class="form-control required" type="text" id="txtFirstName" required value="@record.passedfName" />
+            </div>
+            <div class="col-md-12">
+                <label id="lblLastName">Contact Last Name</label>
+                <input class="form-control required" type="text" id="txtLastName" required value="@record.passedlName" />
+            </div>
+            <div class="col-md-12">
+                <label id="lblEmailAddress">Contact eMail Address</label>
+                <input class="form-control required" type="email" id="txtEmailAddress" value="@record.passedeMail">
+            </div>
+            <div class="col-md-12">
+                <label>Contact Email Address Type</label>
+                <select class="custom-select" id="inputGroupEmailType">
+                    @if (record.passedeMailType == 0)
+                    {
+                        <option selected value="P">Personal</option>
+                        <option value="B">Business</option>
+                    }
+                    else
+                    {
+                        <option value="P">Personal</option>
+                        <option selected value="B">Business</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-12">
+                <br />
+                <input id="btnSave" class="btn btn-primary" type="button" value="Update Contact" />
+                <input id="btnCancel" class="btn btn-danger" type="button" value="Cancel" />
+            </div>
+        </div>
+    </div>
+}
+<div id="dvLoader" class="LoadingDiv" style="display: none;">
+    <table style="height: 100%; margin: auto;">
+        <tr>
+            <td style="vertical-align: middle;">
+                <center>
+                    <img src="..\..\Images\loading-icegif.gif" alt="Loading" />
+                </center>
+            </td>
+        </tr>
+    </table>
+</div>
+<script>
+      $(document).ready(function () {
+          $('#dialog').on('click', '#btnCancel', function () {
+            $('#dialog').hide();
+          });
+      });
+</script>

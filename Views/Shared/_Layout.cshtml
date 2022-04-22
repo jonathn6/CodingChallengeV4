@@ -6,6 +6,33 @@
     <title>@ViewBag.Title - My ASP.NET Application</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    <style>
+        .LoadingDiv {
+            top: 0;
+            left: 0;
+            position: fixed;
+            opacity: 0.97;
+            z-index: 10000000;
+            background: Black;
+            height: 100%;
+            width: 100%;
+            margin: auto;
+        }
+
+        .toast-center-center {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .red_border {
+            border: 1px solid #e46262;
+        }
+
+        .red_text {
+            color: #e46262;
+        }
+    </style>
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -21,8 +48,9 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("View all Data", "ViewAllData", "Home")</li>
+                    <li>@Html.ActionLink("Add a contact", "AddAContact", "Home")</li>
+                    <li>@Html.ActionLink("View all contacts", "ViewAllData", "Home")</li>
+                    <li>@Html.ActionLink("Update all contacts", "UpdateAllData", "Home")</li>
                 </ul>
             </div>
         </div>

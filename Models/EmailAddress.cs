@@ -22,10 +22,9 @@ namespace CodingChallengeV4.Models
     
         public int ID { get; set; }
         public string EmailAddress1 { get; set; }
-        public EmailType EmailType { get; set; }
+        public int EmailType { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Contact> Contacts { get; set; }
     }
-
 }
