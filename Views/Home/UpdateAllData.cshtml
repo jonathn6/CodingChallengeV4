@@ -59,6 +59,9 @@ grid.Column(header: "eMail Type", format:@<text><div class="edit" data-id="@item
 <div id="dialog" style="display: none;" >
 </div>
 <script>
+    //
+    // define a function to handle the popup division
+    //
     $(function () {
         $("#dialog").dialog({
             autoOpen: false,
@@ -66,6 +69,7 @@ grid.Column(header: "eMail Type", format:@<text><div class="edit" data-id="@item
             title: "View Details"
         });
     });
+
     $(document).ready(function () {
 
         $('#toast-container').find('.toast-top-center').removeClass('.toast-top-center');
@@ -87,15 +91,24 @@ grid.Column(header: "eMail Type", format:@<text><div class="edit" data-id="@item
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut"
         }
-
-        $("#btnCancel").on('click', function (event) {
-            console.log("cancel button was clicked");
-            $('#dialog').dialog('hide');
+        //
+        // This will handle the clicking of the cancel button on the popup.  If the user clicks on the 
+        // cancel button on the popup, we need to close the popup and display a toastr message informing
+        // the user that the cancel request was processed.  As such, no data in the grid needs to be updated
+        //
+        $('#dialog').on('click', '#btnCancel', function () { 
+            $('#dialog').dialog('close');
             toastr.warning("Your update has been cancelled");
-            clear();
             display();
         });
-
+        //
+        // This will handle the double click on any grid element.  If the user clicks on a grid element, 
+        // we need to determine which row the user clicked on.  Grab each data element from that grid row
+        // and pass the ID (which is not visible to the user) back to the controller via ajax.  The controller
+        // will pick up the data for that contact ID and return a partial view to ajax.  When ajax gets the
+        // response back, it will be in html format.  ajax will then renter the popup so the user can update
+        // the data for that requested contact ID
+        //
         $("body").on("dblclick", "#WebGrid td", function () {
             var row = $(this).closest("tr");
             var FirstName = row.find("td").eq(1).text();
