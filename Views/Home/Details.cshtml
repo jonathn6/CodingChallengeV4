@@ -8,8 +8,8 @@
         <div class="col-md-4"></div>
         <div class="col-md-4">
             <div class="col-md-12">
-                <label id="lblFirstName">Contact First Name</label>
-                <input class="form-control" type="text" id="txtID" value="@record.passedID" />
+                <label id="lblID">ID</label>
+                <input class="form-control" type="text" id="txtID" readonly value="@record.passedID" />
             </div>
             <div class="col-md-12">
                 <label id="lblFirstName">Contact First Name</label>
@@ -28,13 +28,13 @@
                 <select class="custom-select" id="inputGroupEmailType">
                     @if (record.passedeMailType == 0)
                     {
-                        <option selected value="P">Personal</option>
-                        <option value="B">Business</option>
+                        <option selected value="Personal">Personal</option>
+                        <option value="Business">Business</option>
                     }
                     else
                     {
-                        <option value="P">Personal</option>
-                        <option selected value="B">Business</option>
+                        <option value="Personal">Personal</option>
+                        <option selected value="Business">Business</option>
                     }
                 </select>
             </div>
