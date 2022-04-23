@@ -30,8 +30,8 @@
         <div class="col-md-12">
             <label>Contact Email Address Type</label>
             <select class="custom-select" id="inputGroupEmailType">
-                <option selected value="P">Personal</option>
-                <option value="B">Business</option>
+                <option selected value="0">Personal</option>
+                <option value="1">Business</option>
             </select>
         </div>
         <div class="col-md-12">
@@ -91,7 +91,7 @@
                     $.ajax({
                         url: "/Home/SaveAndUpdate",
                         type: 'POST',
-                        data: { ID: ID, FirstName: FirstName, LastName: LastName, EmailAddress: EmailAddress, EmailType: EmailType },
+                        data: { ID: "0", FirstName: FirstName, LastName: LastName, EmailAddress: EmailAddress, EmailType: EmailType },
                         dataType: "json",
                         success: function (result) {
                             $('#dvLoader').hide();

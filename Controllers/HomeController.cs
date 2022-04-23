@@ -197,6 +197,12 @@ namespace CodingChallengeV4.Controllers
         // by the user exits in the database or not and it will respond accordingly.  If it is not found,
         // the new contact is added to the database.
         //
+
+        //
+        // Since we use this same code to process adding a contact (which does not require an ID) and to
+        // process updating a contact (which does require an ID) we use the ID field to determine if we are
+        // adding a participant (ID will = 0) or updating a participant (ID will be greater than 0)
+        //
         public JsonResult SaveAndUpdate(AddRecordDataFromView model)
         {
             //
@@ -207,10 +213,22 @@ namespace CodingChallengeV4.Controllers
             var result = new JSONMessage();
             try
             {
-                //check to see if the email address sent by the user already exists in the database
+                // If the contact is being added, the ID will be 0 and we will
+                // check to see if the email address sent by the user already exists in the database
+
+                bool AddContact = new Boolean();
+                bool EmailExists = new Boolean();
+
+                AddContact = (model.ID == "0") ? true : false;
+
                 var Context = new ContactContext();
 
-                if (Context.EmailAddress.Any(u => u.EmailAddress1 == model.EmailAddress))
+                if (AddContact == true)
+                {
+                    EmailExists = (Context.EmailAddress.Any(u => u.EmailAddress1 == model.EmailAddress)) ? true : false;
+                }
+
+                if (AddContact == true && EmailExists == true)
                 {
 
                     result.ErrorMessage = "The eMail address entered exists already exists.";
@@ -219,8 +237,10 @@ namespace CodingChallengeV4.Controllers
                 } else
                 {
                     //
-                    // the email was not found in the database so this will create a record with the 
-                    // new contact infomation and call EF to commit the new record to the database
+                    // on an add contact, the email address was not found or on an update, we dont care
+                    // about the email address.  This will create a record with the 
+                    // new contact infomation and call EF to commit the new record to the database or it
+                    // will update the record with the passed ID
                     //
                     using (var ctx = new ContactContext())
                     {
@@ -235,7 +255,7 @@ namespace CodingChallengeV4.Controllers
 
                         var emailAddress = new EmailAddress();
                         emailAddress.EmailAddress1 = model.EmailAddress;
-                        emailAddress.EmailType = model.EmailType == "P" ? 0 : 1;
+                        emailAddress.EmailType = int.Parse(model.EmailType);
 
                         contact.EmailAddress = emailAddress;
 
@@ -243,20 +263,25 @@ namespace CodingChallengeV4.Controllers
                         // insert the contact and emailAddress records into the corresponding table
                         //
 
-                        ctx.EmailAddress.Add(emailAddress);
-                        ctx.Contact.Add(contact);
+                        if (AddContact == true)
+                        {
+                            result.ErrorMessage = "Your contact information has been saved successfully.";
+                            ctx.EmailAddress.Add(emailAddress);
+                            ctx.Contact.Add(contact);
 
-                        //
-                        // set up the response string to send back to ajax
-                        //
-                        result.ErrorMessage = "Your contact information has been saved successfully.";
+                        } else
+                        {
+                            contact.ID = int.Parse(model.ID);
+                            emailAddress.ID = int.Parse(model.ID); 
+                            ctx.EmailAddress.Attach(emailAddress);
+                            ctx.Contact.Attach(contact);
+                            ctx.Entry(emailAddress).State = EntityState.Modified;
+                            ctx.Entry(contact).State = EntityState.Modified;
+                            result.ErrorMessage = "Your contact information has been updated successfully.";
+                        }
                         result.Status = "true";
-
-                        //
-                        // commit the changes to the database
-                        //
-
                         ctx.SaveChanges(); 
+
                     }
 
                 }

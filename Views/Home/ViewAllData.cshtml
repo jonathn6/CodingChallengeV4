@@ -4,11 +4,6 @@
     ViewBag.Title = "ViewAllData";
 }
 
-<!-- jQuery library -->
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
-<script src="https://www.appelsiini.net/download/jquery.jeditable.js"></script>
-
 <h2>View All Contacts</h2>
 <div class="tab-content">
     <div class="tab-pane container active p-0" id="home">
@@ -87,12 +82,3 @@
         </table>
     </div>
 </div>
-<script>
-    $(document).ready(function () {
-        $('.td').dblclick(function (event) {
-            var id = event.target.id;
-            console.log('id = ' + id);
-        });
-    }
-    )
-</script>
