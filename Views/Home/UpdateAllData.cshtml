@@ -4,208 +4,221 @@
     ViewBag.Title = "UpdateAllData";
 }
 
-@{
-    Layout = null;
-    WebGrid grid = new WebGrid(source: Model, canPage: true, canSort: false);
-}
-<!-- jQuery library -->
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
-<script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
-
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
-
-<!-- Latest compiled JavaScript -->
-<!-- add thids links for the error message-->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/1.3.1/css/toastr.css" />
-<script src="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/1.3.1/js/toastr.js"></script>
-<style type="text/css">
-
-    .Grid {
-        border: 1px solid #ccc;
-        border-collapse: collapse;
+<div id="ajaxgrid">
+    @{
+        Layout = null;
+        WebGrid grid = new WebGrid(source: Model, canPage: true, canSort: false, ajaxUpdateContainerId: "ajaxgrid");
     }
+</div>
+    <!-- jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
 
-        .Grid th {
-            background-color: #F7F7F7;
-            font-weight: bold;
-        }
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
 
-        .Grid th, .Grid td {
-            padding: 5px;
-            width: 150px;
+    <!-- Latest compiled JavaScript -->
+    <!-- add thids links for the error message-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/1.3.1/css/toastr.css" />
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/1.3.1/js/toastr.js"></script>
+    <style type="text/css">
+
+        .Grid {
             border: 1px solid #ccc;
+            border-collapse: collapse;
         }
 
-        .Grid, .Grid table td {
-            border: 0px solid #ccc;
-        }
-
-            .Grid th a, .Grid th a:visited {
-                color: #333;
+            .Grid th {
+                background-color: #F7F7F7;
+                font-weight: bold;
             }
-</style>
-<h2>Update All Contacts</h2>
 
-@grid.GetHtml(
-    htmlAttributes: new { @id = "WebGrid", @class = "Grid" },
-    columns: grid.Columns(
-grid.Column(header: "", format:@<text><div class="edit" data-id="@item.passedID" data-propertyname="passedID">@item.passedID</div></text>),
+            .Grid th, .Grid td {
+                padding: 5px;
+                width: 150px;
+                border: 1px solid #ccc;
+            }
+
+            .Grid, .Grid table td {
+                border: 0px solid #ccc;
+            }
+
+                .Grid th a, .Grid th a:visited {
+                    color: #333;
+                }
+    </style>
+    <h2>Update All Contacts</h2>
+
+    @grid.GetHtml(
+        htmlAttributes: new { @id = "WebGrid", @class = "Grid" },
+        columns: grid.Columns(
+    grid.Column(header: "", format:@<text><div class="edit" data-id="@item.passedID" data-propertyname="passedID">@item.passedID</div></text>),
 grid.Column(header: "First Name", format:@<text><div class="edit" data-id="@item.passedID" data-propertyname="passedfName">@item.passedfName</div></text>),
 grid.Column(header: "Last Name", format:@<text><div class="edit" data-id="@item.passedID" data-propertyname="passedlName">@item.passedlName</div></text>),
 grid.Column(header: "eMail Address", format:@<text><div class="edit" data-id="@item.passedID" data-propertyname="passedeMail">@item.passedeMail</div></text>),
 grid.Column(header: "eMail Type", format:@<text><div class="edit" data-id="@item.passedID" data-propertyname="passedeMailTypeString">@item.passedeMailTypeString</div></text>)
 )
 )
-<div id="dialog" style="display: none;">
-</div>
+    <div id="dialog" style="display: none;">
+    </div>
 
-<div id="saveData" style="display: none;">
-    <input type="text" id="saveID" value="">
-    <input type="text" id="saveFirstName" value="">
-    <input type="text" id="saveLastName" value="">
-    <input type="text" id="saveEmailAddress" value="">
-    <input type="text" id="saveEmailAddressType" value="">
-</div>
+    <div id="saveData" style="display: none;">
+        <input type="text" id="saveRow" value="" />
+        <input type="text" id="saveID" value="" />
+        <input type="text" id="saveFirstName" value="" />
+        <input type="text" id="saveLastName" value="" />
+        <input type="text" id="saveEmailAddress" value="" />
+        <input type="text" id="saveEmailAddressType" value="" />
+    </div>
 
-<script>
+    <script>
 
-    $(document).ready(function () {
+        $(document).ready(function () {
 
-        $(function () {
-            $("#dialog").dialog({
-                autoOpen: false,
-                modal: true,
-                title: "View Details"
+            $(function () {
+                $("#dialog").dialog({
+                    autoOpen: false,
+                    modal: true,
+                    title: "View Details"
+                });
             });
-        });
 
-        $('#toast-container').find('.toast-top-center').removeClass('.toast-top-center');
-        toastr.options = {
-            "closeButton": true,
-            'autoWidth': false,
-            "debug": false,
-            "newestOnTop": true,
-            "progressBar": true,
-            "positionClass": "toast-center-center",
-            "preventDuplicates": false,
-            "onclick": null,
-            "showDuration": "300",
-            "hideDuration": "1000",
-            "timeOut": "3000",
-            "extendedTimeOut": "1000",
-            "showEasing": "swing",
-            "hideEasing": "linear",
-            "showMethod": "fadeIn",
-            "hideMethod": "fadeOut"
-        }
-        //
-        // This will handle the clicking of the cancel button on the popup.  If the user clicks on the
-        // cancel button on the popup, we need to close the popup and display a toastr message informing
-        // the user that the cancel request was processed.  As such, no data in the grid needs to be updated
-        //
-        $('#dialog').on('click', '#btnCancel', function () {
-            $('#dialog').dialog('close');
-            toastr.warning("Your update has been cancelled");
-            display();
-        });
-        //
-        // This will handle the clicking of the save button on the popup.  If the user clicks on the
-        // save button on the popup, we need to pick up all the data from the form that the user entered
-        // and compare that data to the data on the origianl grid row.  If no changes were made, close
-        // the popup and inform the user that there were no changes made.
-        //
-        $('#dialog').on('click', '#btnSave', function () {
-            var FirstName = $('#txtFirstName').val();
-            var LastName = $('#txtLastName').val();
-            var EmailAddress = $('#txtEmailAddress').val();
-            var EmailType = $('#inputGroupEmailType').val();
+            $('#toast-container').find('.toast-top-center').removeClass('.toast-top-center');
+            toastr.options = {
+                "closeButton": true,
+                'autoWidth': false,
+                "debug": false,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-center-center",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "3000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
             //
-            // if the user didnt make any changes to the data but still clicked on the save button,
-            // provide the user with a message that no update was needed
+            // This will handle the clicking of the cancel button on the popup.  If the user clicks on the
+            // cancel button on the popup, we need to close the popup and display a toastr message informing
+            // the user that the cancel request was processed.  As such, no data in the grid needs to be updated
             //
-            if (FirstName == $('#saveFirstName').val() && LastName == $('#saveLastName').val() && EmailAddress == $('#saveEmailAddress').val() && EmailType == $('#saveEmailAddressType').val()) {
+            $('#dialog').on('click', '#btnCancel', function () {
                 $('#dialog').dialog('close');
-                toastr.warning("No update was needed");
-            } else {
+                toastr.warning("Your update has been cancelled");
+                display();
+            });
+            //
+            // This will handle the clicking of the save button on the popup.  If the user clicks on the
+            // save button on the popup, we need to pick up all the data from the form that the user entered
+            // and compare that data to the data on the origianl grid row.  If no changes were made, close
+            // the popup and inform the user that there were no changes made.
+            //
+            $('#dialog').on('click', '#btnSave', function () {
+                var FirstName = $('#txtFirstName').val();
+                var LastName = $('#txtLastName').val();
+                var EmailAddress = $('#txtEmailAddress').val();
+                var EmailType = $('#inputGroupEmailType').val();
                 //
-                // Since the user changed some of the data, that data needs to be sent to the controller
-                // so the database for the current contact can be updated.
+                // if the user didnt make any changes to the data but still clicked on the save button,
+                // provide the user with a message that no update was needed
                 //
-                var ID = $('#saveID').val();
-                if (EmailType == "Personal") {
-                    EmailType = "0";
+                if (FirstName == $('#saveFirstName').val() && LastName == $('#saveLastName').val() && EmailAddress == $('#saveEmailAddress').val() && EmailType == $('#saveEmailAddressType').val()) {
+                    $('#dialog').dialog('close');
+                    toastr.warning("No update was needed");
                 } else {
-                    EmailType = "1";
+                    //
+                    // Since the user changed some of the data, that data needs to be sent to the controller
+                    // so the database for the current contact can be updated.
+                    //
+                    var ID = $('#saveID').val();
+                    if (EmailType == "Personal") {
+                        EmailType = "0";
+                    } else {
+                        EmailType = "1";
+                    }
+                    $.ajax({
+                        url: "/Home/SaveAndUpdate",
+                        type: 'POST',
+                        data: { ID: ID, FirstName: FirstName, LastName: LastName, EmailAddress: EmailAddress, EmailType: EmailType },
+                        dataType: "json",
+                        success: function (result) {
+                            if (result.Status == "true") {
+                                var row = $('saveRow').val();
+                                location.reload();
+                                toastr.success(result.ErrorMessage);
+                                clear();
+                                display();
+                            }
+                            else {
+                                toastr.warning(result.ErrorMessage);
+                                clear();
+                                display();
+                            }
+                        }
+                    });
+                    $('#dialog').dialog('close');
+                    toastr.success("Your update has been saved");
                 }
-                $.ajax({
-                    url: "/Home/SaveAndUpdate",
-                    type: 'POST',
-                    data: { ID: ID, FirstName: FirstName, LastName: LastName, EmailAddress: EmailAddress, EmailType: EmailType },
-                    dataType: "json",
-                    success: function (result) {
+            });
+            //
+            // This will handle the double click on any grid element.  If the user clicks on a grid element,
+            // we need to determine which row the user clicked on.  Grab each data element from that grid row
+            // and store them in a hidden div.  This is needed to verify on the return if any data changed. Then,
+            // pass the ID (which is not visible to the user) back to the controller via ajax.  The controller
+            // will pick up the data for that contact ID and return a partial view to ajax.  When ajax gets the
+            // response back, it will be in html format.  ajax will then renter the popup so the user can update
+            // the data for that requested contact ID.
+            //
+            $("body").on("dblclick", "#WebGrid td", function () {
+                //
+                // pick up the row that was clicked on and pick up each of the column values and save them
+                // into hidden fields in the page.  These will be used later to verify whether the user saved
+                // changes to data or save data with no changes
+                //
+                var row = $(this).closest("tr");
+                var ID = row.find("td").eq(0).text();
+                $("saveRow").val(row);
+                $("#saveID").val(ID);
+                $("#saveFirstName").val(row.find("td").eq(1).text());
+                $("#saveLastName").val(row.find("td").eq(2).text());
+                $("#saveEmailAddress").val(row.find("td").eq(3).text());
+                $("#saveEmailAddressType").val(row.find("td").eq(4).text());
+                var row = $(this).closest("tr");
+                var ID = row.find("td").eq(0).text();
+                $("saveRow").val(row);
+                $("#saveID").val(ID);
+                $("#saveFirstName").val(row.find("td").eq(1).text());
+                $("#saveLastName").val(row.find("td").eq(2).text());
+                $("#saveEmailAddress").val(row.find("td").eq(3).text());
+                $("#saveEmailAddressType").val(row.find("td").eq(4).text());
 
-                        if (result.Status == "true") {
-                            toastr.success(result.ErrorMessage);
-                            clear();
-                            display();
-                        }
-                        else {
-                            toastr.warning(result.ErrorMessage);
-                            clear();
-                            display();
-                        }
+                $.ajax({
+                    url: "/Home/Details",
+                    type: "POST",
+                    data: { ID: ID, FirstName: "", LastName: "", EmailAddress: "", EmailType: "" },
+                    dataType: "html",
+                    success: function (result) {
+                        $('#dialog').html(result);
+                        $('#dialog').dialog('open');
+                    },
+                    failure: function (result) {
+                        alert("FAILURE " + result.responseText);
+                    },
+                    error: function (result) {
+                        alert("ERROR " + result.responseText);
                     }
                 });
-                $('#dialog').dialog('close');
-                toastr.success("Your update has been saved");
-            }
-        });
-        //
-        // This will handle the double click on any grid element.  If the user clicks on a grid element,
-        // we need to determine which row the user clicked on.  Grab each data element from that grid row
-        // and store them in a hidden div.  This is needed to verify on the return if any data changed. Then,
-        // pass the ID (which is not visible to the user) back to the controller via ajax.  The controller
-        // will pick up the data for that contact ID and return a partial view to ajax.  When ajax gets the
-        // response back, it will be in html format.  ajax will then renter the popup so the user can update
-        // the data for that requested contact ID.
-        //
-        $("body").on("dblclick", "#WebGrid td", function () {
-            //
-            // pick up the row that was clicked on and pick up each of the column values and save them
-            // into hidden fields in the page.  These will be used later to verify whether the user saved
-            // changes to data or save data with no changes
-            //
-            var row = $(this).closest("tr");
-            var ID = row.find("td").eq(0).text();
-            $("#saveID").val(ID);
-            $("#saveFirstName").val(row.find("td").eq(1).text());
-            $("#saveLastName").val(row.find("td").eq(2).text());
-            $("#saveEmailAddress").val(row.find("td").eq(3).text());
-            $("#saveEmailAddressType").val(row.find("td").eq(4).text());
 
-            $.ajax({
-                url: "/Home/Details",
-                type: "POST",
-                data: { ID: ID, FirstName: "", LastName: "", EmailAddress: "", EmailType: "" },
-                dataType: "html",
-                success: function (result) {
-                    $('#dialog').html(result);
-                    $('#dialog').dialog('open');
-                },
-                failure: function (result) {
-                    alert("FAILURE " + result.responseText);
-                },
-                error: function (result) {
-                    alert("ERROR " + result.responseText);
-                }
+                return false;
             });
-
-            return false;
         });
-    });
-</script>
+    </script>
 
 
 
