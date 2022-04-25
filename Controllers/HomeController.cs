@@ -26,84 +26,9 @@ namespace CodingChallengeV4.Controllers
             return View();
         }
 
-        //
-        // When adding a contact to the database, check to see if the Contact table exists
-        // if the table does not exist, populate the seed records and save them.  The EF will
-        // create the database and corresponding tables and insert the seed records.  If the try
-        // returns a count, then the table exists and there is a record in the table so there is
-        // no reason to insert a seed record.
-        //
         public ActionResult AddAContact()
         {
-            void AddSeedRecords()
-            {
-                using (var ctx = new ContactContext())
-                {
-                    //
-                    // create a contact and email address record and populate
-                    //
-                    var seed1Contact = new Contact();
-                    var seed1EmailAddress = new EmailAddress();
-                    seed1Contact.FirstName = "seedFirst1";
-                    seed1Contact.LastName = "seedLast1";
-                    seed1EmailAddress.EmailAddress1 = "seed1@seed.com";
-                    seed1EmailAddress.EmailType = 0;
-                    seed1Contact.EmailAddress = seed1EmailAddress;
-                    //
-                    // add the seed record to the collection that will be commited to the database
-                    //
-                    ctx.EmailAddress.Add(seed1EmailAddress);
-                    ctx.Contact.Add(seed1Contact);
-                    //
-                    // commit the records to the database
-                    //
-                    ctx.SaveChanges();
-
-                    //
-                    // create second seed contact record
-                    //
-                    var seed2Contact = new Contact();
-                    var seed2EmailAddress = new EmailAddress();
-                    seed2Contact.FirstName = "seedFirst2";
-                    seed2Contact.LastName = "seedLast2";
-                    seed2EmailAddress.EmailAddress1 = "seed2@seed.com";
-                    seed2EmailAddress.EmailType = 0;
-                    seed2Contact.EmailAddress = seed2EmailAddress;
-                    //
-                    // add the seed record to the collection that will be commited to the database
-                    //
-                    ctx.EmailAddress.Add(seed2EmailAddress);
-                    ctx.Contact.Add(seed2Contact);
-                    //
-                    // commit the records to the database
-                    //
-                    ctx.SaveChanges();
-
-                }
-            }
             ViewBag.Message = "Add a contact";
-            //
-            // create a database instance and count the number of records with the Contact.ID = 1 or 2
-            //
-            // If the try is successful, then there are records in the database with an ID of 1 and 2 so 
-            // there is no need to create the seed records.
-            //
-            // If the try does not return any records, the catch will execute.  In that case create 2 
-            // seed records and commit them to the database.
-            //
-            try
-            {
-                var Context = new ContactContext();
-                if (Context.Contact.Where(s => (s.ID == 1 || s.ID == 2)).Count() < 2)
-                {
-                    AddSeedRecords();
-                }
-            }
-            catch (Exception)
-            {
-                AddSeedRecords();
-
-            }
             return View();
         }
 

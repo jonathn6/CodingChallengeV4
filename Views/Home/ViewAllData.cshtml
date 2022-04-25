@@ -1,7 +1,7 @@
 ﻿@model List<CodingChallengeV4.ViewModels.ContactPassData>
 
 @{
-    ViewBag.Title = "ViewAllData";
+    ViewBag.RecordCount = (Model.Count() > 0) ? Model.FirstOrDefault().passedID : 0;
 }
 
 <h2>View All Contacts</h2>
@@ -19,6 +19,12 @@
                 </tr>
             </thead>
             <tbody>
+                @if (ViewBag.RecordCount == 0)
+            {
+                <tr>
+                    <th colspan="5">There are no records in the database</th>
+                </tr>
+            } 
                 @foreach (var record in Model)
                 {
                     <tr>
