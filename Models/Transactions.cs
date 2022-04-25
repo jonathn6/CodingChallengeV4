@@ -18,6 +18,7 @@ namespace CodingChallengeV4.Models
         public string LastName { get; set; }
         public string EmailAddress { get; set; }
         public string EmailType { get; set; }
+
     }
     public enum EmailType
     {

@@ -1,59 +1,230 @@
 ﻿@model List<CodingChallengeV4.ViewModels.ContactPassData>
 
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/1.3.1/css/toastr.css" />
+<script src="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/1.3.1/js/toastr.js"></script>
+
 @foreach (var record in Model)
 {
 
     <h2>Update @record.passedfName&nbsp;@record.passedlName</h2>
-    <div class="col-md-12">
-        <div class="col-md-4"></div>
-        <div class="col-md-4">
-            <div class="col-md-12">
-                <label id="lblID">ID</label>
-                <input class="form-control" type="text" id="txtID" readonly value="@record.passedID" />
+    <div>
+        <div class="col-md-12">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+                <div class="col-md-12">
+                    <label id="lblID">ID</label>
+                    <input class="form-control" type="text" id="txtID" readonly value="@record.passedID" />
+                </div>
+                <div class="col-md-12">
+                    <label id="lblFirstName">Contact First Name</label>
+                    <input class="form-control required" type="text" id="txtFirstName" maxlength="20" size="30" required value="@record.passedfName" />
+                </div>
+                <div class="col-md-12">
+                    <label id="lblLastName">Contact Last Name</label>
+                    <input class="form-control required" type="text" id="txtLastName" maxlength="20" size="30" required value="@record.passedlName" />
+                </div>
+                <div class="col-md-12">
+                    <label id="lblEmailAddress">Contact eMail Address</label>
+                    <input class="form-control required" type="email" id="txtEmailAddress" maxlength="50" size="30" required value="@record.passedeMail">
+                </div>
+                <div class="col-md-12">
+                    <label>Contact Email Address Type</label>
+                    <select class="custom-select" id="inputGroupEmailType">
+                        @if (record.passedeMailType == 0)
+                        {
+                            <option selected value="Personal">Personal</option>
+                            <option value="Business">Business</option>
+                        }
+                        else
+                        {
+                            <option value="Personal">Personal</option>
+                            <option selected value="Business">Business</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-12">
+                    <br />
+                    <input id="btnSave" class="btn btn-primary" type="button" value="Update Contact" />
+                    <input id="btnCancel" class="btn btn-danger" type="button" value="Cancel" />
+                </div>
             </div>
-            <div class="col-md-12">
-                <label id="lblFirstName">Contact First Name</label>
-                <input class="form-control required" type="text" id="txtFirstName" required value="@record.passedfName" />
-            </div>
-            <div class="col-md-12">
-                <label id="lblLastName">Contact Last Name</label>
-                <input class="form-control required" type="text" id="txtLastName" required value="@record.passedlName" />
-            </div>
-            <div class="col-md-12">
-                <label id="lblEmailAddress">Contact eMail Address</label>
-                <input class="form-control required" type="email" id="txtEmailAddress" value="@record.passedeMail">
-            </div>
-            <div class="col-md-12">
-                <label>Contact Email Address Type</label>
-                <select class="custom-select" id="inputGroupEmailType">
-                    @if (record.passedeMailType == 0)
-                    {
-                        <option selected value="Personal">Personal</option>
-                        <option value="Business">Business</option>
-                    }
-                    else
-                    {
-                        <option value="Personal">Personal</option>
-                        <option selected value="Business">Business</option>
-                    }
-                </select>
-            </div>
-            <div class="col-md-12">
-                <br />
-                <input id="btnSave" class="btn btn-primary" type="button" value="Update Contact" />
-                <input id="btnCancel" class="btn btn-danger" type="button" value="Cancel" />
-            </div>
+            <div class="col-md-2"></div>
         </div>
     </div>
+    <div id="origData" style="display: none;">
+        <input type="text" id="origID" value="@record.passedID" />
+        <input type="text" id="origFirstName" value="@record.passedfName" />
+        <input type="text" id="origLastName" value="@record.passedlName" />
+        <input type="text" id="origEmailAddress" value="@record.passedeMail" />
+        @if (record.passedeMailType == 0)
+        {
+            <input type="text" id="origEmailAddressType" value="Personal" />
+        }
+        else
+        { 
+            <input type="text" id="origEmailAddressType" value="Business" />
+        }
+    </div>
 }
-<div id="dvLoader" class="LoadingDiv" style="display: none;">
-    <table style="height: 100%; margin: auto;">
-        <tr>
-            <td style="vertical-align: middle;">
-                <center>
-                    <img src="..\..\Images\loading-icegif.gif" alt="Loading" />
-                </center>
-            </td>
-        </tr>
-    </table>
-</div>
+
+<script type="text/javascript">
+
+    $('#toast-container').find('.toast-top-center').removeClass('.toast-top-center');
+    toastr.options = {
+        "closeButton": true,
+        'autoWidth': false,
+        "debug": false,
+        "newestOnTop": true,
+        "progressBar": true,
+        "positionClass": "toast-center-center",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "500",
+        "hideDuration": "1000",
+        "timeOut": "3000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
+
+    $(document).ready(function () {
+        //
+        // This will handle the clicking of the cancel button on the popup.  If the user clicks on the
+        // cancel button on the popup, we need to close the popup and display a toastr message informing
+        // the user that the cancel request was processed.  As such, no data in the grid needs to be updated
+        //
+        $('#dialog').on('click', '#btnCancel', function () {
+            $("#txtDisplayToast").val("y");
+            $("#txtCloseDialog").val("y");
+            $('#dialog').dialog('close');
+            toastr.warning("Your update has been cancelled.");
+        })
+
+        //
+        // This will handle the clicking of the save button on the popup.  If the user clicks on the
+        // save button on the popup, we need to pick up all the data from the form that the user entered
+        // and compare that data to the data on the origianl grid row.  If no changes were made, close
+        // the popup and inform the user that there were no changes made.
+        //
+        $('#dialog').on('click', '#btnSave', function () {
+            var isValid = false;
+            //
+            // check for errors in the data.  if there are errors, then keep the popup open and inform
+            // the user of the fields that need to be corrected
+            //
+            isValid = CheckRequiredFields();
+            if (!isValid) {
+                toastr.warning("Please fix the indicated errors.");
+            } else {
+                //
+                // pick up all the updated data fields
+                //
+                var FirstName = $('#txtFirstName').val();
+                var LastName = $('#txtLastName').val();
+                var EmailAddress = $('#txtEmailAddress').val();
+                var EmailType = $('#inputGroupEmailType').val();
+                //
+                // pick up all the original data fields
+                //
+                var origFirstName = $('#origFirstName').val();
+                var origLastName = $('#origLastName').val();
+                var origEmailAddress = $('#origEmailAddress').val();
+                var origEmailType = $('#origEmailAddressType').val();
+                //
+                // if all the original data fields are the same as the edited data fields, then the user
+                // did not make any changes and no updates are needed.  Put out a corresponding toast
+                // message and close the dialog
+                //
+                if (FirstName == origFirstName && LastName == origLastName && EmailAddress == origEmailAddress && EmailType == origEmailType) {
+                    toastr.warning("You did not make any changes. Try clicking the Cancel button instead.");
+                } else {
+                    //
+                    // The user has entered new data.  Now we need to send the data to the controller to
+                    // update the database. Use ajax to send the data to the controller and put up the
+                    // corresponding toast message and close or dont close the dialog depending on the 
+                    // status of the update.
+                    //
+                    var ID = $('#txtID').val();
+                    if (EmailType == "Personal") {
+                        EmailType = "0";
+                    } else {
+                        EmailType = "1";
+                    }
+                    $.ajax({
+                        url: "/Home/SaveAndUpdate",
+                        type: 'POST',
+                        data: { ID: ID, FirstName: FirstName, LastName: LastName, EmailAddress: EmailAddress, EmailType: EmailType },
+                        dataType: "json",
+                        success: function (result) {
+                            if (result.Status == "true") {
+                                var row = $('saveRow').val();
+                                location.reload();
+                                toastr.success(result.ErrorMessage);
+                                $('#dialog').dialog('close');
+                            }
+                            else {
+                                if (result.ErrorMessage == "1") {
+                                    $("#txtEmailAddress").addClass('red_border');
+                                    $("#lblEmailAddress").addClass('red_text');
+                                    $("#lblEmailAddress").text("Must be a unique eMail address");
+                                } else {
+                                    toastr.warning("We are unable to process your request at this time.Please try again");
+                                    $('#dialog').dialog('close');
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        })
+
+        function CheckRequiredFields() {
+            var isValid = true;
+
+            if ($.trim($("#txtFirstName").val()) == '') {
+                isValid = false;
+                $("#txtFirstName").addClass('red_border');
+                $("#lblFirstName").addClass('red_text');
+                $("#lblFirstName").text("Please enter a valid First Name");
+            } else {
+                $("#lblFirstName").text("Contact First Name");
+                $("#txtFirstName").removeClass('red_border');
+                $("#lblFirstName").removeClass('red_text');
+            }
+
+            if ($.trim($("#txtLastName").val()) == '') {
+                isValid = false;
+                $("#txtLastName").addClass('red_border');
+                $("#lblLastName").addClass('red_text');
+                $("#lblLastName").text("Please enter a valid Last Name");
+            } else {
+                $("#txtLastName").removeClass('red_border');
+                $("#lblLastName").removeClass('red_text');
+                $("#lblLastName").text("Contact Last Name");
+            }
+
+            if ($.trim($("#txtEmailAddress").val()) == '') {
+                isValid = false;
+                $("#txtEmailAddress").addClass('red_border');
+                $("#lblEmailAddress").addClass('red_text');
+                $("#lblEmailAddress").text("eMail Address is a required field.");
+            } else {
+                $("#txtEmailAddress").removeClass('red_border');
+                $("#lblEmailAddress").removeClass('red_text');
+                $("#lblEmailAddress").text("Contact eMail Address");
+            }
+
+            if (!isValid) {
+                $("#txtDisplayToast").val("n");
+            }
+
+            return isValid;
+        }
+
+    })
+
+
+</script>

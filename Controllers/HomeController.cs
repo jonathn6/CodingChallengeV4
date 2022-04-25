@@ -211,86 +211,109 @@ namespace CodingChallengeV4.Controllers
             //
             // Context => an instance of the database
             var result = new JSONMessage();
+            bool AddContact = new Boolean();
+            bool EmailExists = new Boolean();
+            int EmailExistsID = 0;
+            // If the contact is being added, the ID will be 0
+            AddContact = (model.ID == "0") ? true : false;
             try
             {
-                // If the contact is being added, the ID will be 0 and we will
-                // check to see if the email address sent by the user already exists in the database
-
-                bool AddContact = new Boolean();
-                bool EmailExists = new Boolean();
-
-                AddContact = (model.ID == "0") ? true : false;
 
                 var Context = new ContactContext();
 
-                if (AddContact == true)
+                //
+                // look to see if the email address entered by the user is already in the database
+                // if it does, get the ID of the record.  On an update, if the ID is different than
+                // the ID of the record being updated, we must reject the update since an email address
+                // can not belong to more than 1 contact
+                //
+                EmailExists = (Context.EmailAddress.Any(u => u.EmailAddress1 == model.EmailAddress)) ? true : false;
+                if (EmailExists)
                 {
-                    EmailExists = (Context.EmailAddress.Any(u => u.EmailAddress1 == model.EmailAddress)) ? true : false;
+                    EmailAddress emailAddress = Context.EmailAddress.Where(record => record.EmailAddress1 == model.EmailAddress).FirstOrDefault();
+                    EmailExistsID = emailAddress.ID;
                 }
 
                 if (AddContact == true && EmailExists == true)
                 {
 
-                    result.ErrorMessage = "The eMail address entered exists already exists.";
+                    result.ErrorMessage = "The eMail address entered already exists. Contact was not added.";
                     result.Status = "false";
-
                 } else
                 {
                     //
-                    // on an add contact, the email address was not found or on an update, we dont care
-                    // about the email address.  This will create a record with the 
-                    // new contact infomation and call EF to commit the new record to the database or it
-                    // will update the record with the passed ID
+                    // on an update, if the entered email address already exists in the database for an ID other than the ID
+                    // being updated, do not update the database or the web grid and display an error message
                     //
-                    using (var ctx = new ContactContext())
+                    if (AddContact == false && EmailExists == true && EmailExistsID != int.Parse(model.ID))
+                    {
+                        result.ErrorMessage = "1";
+                        result.Status = "false";
+                    } else
                     {
                         //
-                        // contact => a variable of type Contact. This will hold the contact data the user entered.
-                        // emailAddress => a variable of type EmailAddress. This will hold the email address data
-                        //                 the user entered.
+                        // on an add contact, the email address was not found or on an update, we are updating
+                        // the record intended to be updated.  This will create a record with the 
+                        // new contact infomation and call EF to commit the new record to the database or it
+                        // will update the record with the passed ID
                         //
-                        var contact = new Contact();
-                        contact.FirstName = model.FirstName;
-                        contact.LastName = model.LastName;
-
-                        var emailAddress = new EmailAddress();
-                        emailAddress.EmailAddress1 = model.EmailAddress;
-                        emailAddress.EmailType = int.Parse(model.EmailType);
-
-                        contact.EmailAddress = emailAddress;
-
-                        //
-                        // insert the contact and emailAddress records into the corresponding table
-                        //
-
-                        if (AddContact == true)
+                        using (var ctx = new ContactContext())
                         {
-                            result.ErrorMessage = "Your contact information has been saved successfully.";
-                            ctx.EmailAddress.Add(emailAddress);
-                            ctx.Contact.Add(contact);
+                            //
+                            // contact => a variable of type Contact. This will hold the contact data the user entered.
+                            // emailAddress => a variable of type EmailAddress. This will hold the email address data
+                            //                 the user entered.
+                            //
+                            var contact = new Contact();
+                            contact.FirstName = model.FirstName;
+                            contact.LastName = model.LastName;
 
-                        } else
-                        {
-                            contact.ID = int.Parse(model.ID);
-                            emailAddress.ID = int.Parse(model.ID); 
-                            ctx.EmailAddress.Attach(emailAddress);
-                            ctx.Contact.Attach(contact);
-                            ctx.Entry(emailAddress).State = EntityState.Modified;
-                            ctx.Entry(contact).State = EntityState.Modified;
-                            result.ErrorMessage = "Your contact information has been updated successfully.";
+                            var emailAddress = new EmailAddress();
+                            emailAddress.EmailAddress1 = model.EmailAddress;
+                            emailAddress.EmailType = int.Parse(model.EmailType);
+
+                            contact.EmailAddress = emailAddress;
+
+                            //
+                            // insert the contact and emailAddress records into the corresponding table
+                            //
+
+                            if (AddContact == true)
+                            {
+                                result.ErrorMessage = "Your contact information has been saved successfully.";
+                                ctx.EmailAddress.Add(emailAddress);
+                                ctx.Contact.Add(contact);
+
+                            }
+                            else
+                            {
+                                contact.ID = int.Parse(model.ID);
+                                emailAddress.ID = int.Parse(model.ID);
+                                ctx.EmailAddress.Attach(emailAddress);
+                                ctx.Contact.Attach(contact);
+                                ctx.Entry(emailAddress).State = EntityState.Modified;
+                                ctx.Entry(contact).State = EntityState.Modified;
+                                result.ErrorMessage = "Your contact information has been updated successfully.";
+                            }
+                            result.Status = "true";
+                            ctx.SaveChanges();
+
                         }
-                        result.Status = "true";
-                        ctx.SaveChanges(); 
-
                     }
-
                 }
 
             }
             catch (Exception ex)
             {
-                result.ErrorMessage = "We are unable to process your request at this time. Please try again later.";
-                result.Status = "false";
+                if (AddContact == true)
+                {
+                    result.ErrorMessage = "We are unable to process your request at this time. Please try again later.";
+                    result.Status = "false";
+                } else
+                {
+                    result.ErrorMessage = "2";
+                    result.Status = "false";
+                }
             }
             return Json(result, JsonRequestBehavior.AllowGet);
         }
