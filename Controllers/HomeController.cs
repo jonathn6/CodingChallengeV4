@@ -35,40 +35,74 @@ namespace CodingChallengeV4.Controllers
         //
         public ActionResult AddAContact()
         {
+            void AddSeedRecords()
+            {
+                using (var ctx = new ContactContext())
+                {
+                    //
+                    // create a contact and email address record and populate
+                    //
+                    var seed1Contact = new Contact();
+                    var seed1EmailAddress = new EmailAddress();
+                    seed1Contact.FirstName = "seedFirst1";
+                    seed1Contact.LastName = "seedLast1";
+                    seed1EmailAddress.EmailAddress1 = "seed1@seed.com";
+                    seed1EmailAddress.EmailType = 0;
+                    seed1Contact.EmailAddress = seed1EmailAddress;
+                    //
+                    // add the seed record to the collection that will be commited to the database
+                    //
+                    ctx.EmailAddress.Add(seed1EmailAddress);
+                    ctx.Contact.Add(seed1Contact);
+                    //
+                    // commit the records to the database
+                    //
+                    ctx.SaveChanges();
+
+                    //
+                    // create second seed contact record
+                    //
+                    var seed2Contact = new Contact();
+                    var seed2EmailAddress = new EmailAddress();
+                    seed2Contact.FirstName = "seedFirst2";
+                    seed2Contact.LastName = "seedLast2";
+                    seed2EmailAddress.EmailAddress1 = "seed2@seed.com";
+                    seed2EmailAddress.EmailType = 0;
+                    seed2Contact.EmailAddress = seed2EmailAddress;
+                    //
+                    // add the seed record to the collection that will be commited to the database
+                    //
+                    ctx.EmailAddress.Add(seed2EmailAddress);
+                    ctx.Contact.Add(seed2Contact);
+                    //
+                    // commit the records to the database
+                    //
+                    ctx.SaveChanges();
+
+                }
+            }
             ViewBag.Message = "Add a contact";
             //
-            // create a database instance and count the number of records with the Contact.ID = 1
+            // create a database instance and count the number of records with the Contact.ID = 1 or 2
             //
-            // If the try is successful, then there is a record in the database with an ID of 1 so 
-            // there is no need to create a seed record.
+            // If the try is successful, then there are records in the database with an ID of 1 and 2 so 
+            // there is no need to create the seed records.
             //
-            // If the try does not return any records, the catch will execute.  In that case create a 
-            // seed record and commit that record to the database.
+            // If the try does not return any records, the catch will execute.  In that case create 2 
+            // seed records and commit them to the database.
             //
             try
             {
                 var Context = new ContactContext();
-                Context.Contact.Where(s => s.ID == 1).Count();
+                if (Context.Contact.Where(s => (s.ID == 1 || s.ID == 2)).Count() < 2)
+                {
+                    AddSeedRecords();
+                }
             }
             catch (Exception)
             {
-                using (var ctx = new ContactContext())
-                {
-                    var seedContact = new Contact();
-                    seedContact.FirstName = "seelFirst";
-                    seedContact.LastName = "seedLast";
+                AddSeedRecords();
 
-                    var seedEmailAddress = new EmailAddress();
-                    seedEmailAddress.EmailAddress1 = "seed@seed.com";
-                    seedEmailAddress.EmailType = 0;
-
-                    seedContact.EmailAddress = seedEmailAddress;
-
-                    ctx.EmailAddress.Add(seedEmailAddress);
-                    ctx.Contact.Add(seedContact);
-                    ctx.SaveChanges();
-
-                }
             }
             return View();
         }
@@ -92,10 +126,13 @@ namespace CodingChallengeV4.Controllers
             //             and the contactRecord list is complete, I copy the completed list into PassList.
             //             PassList is then returned to the View.
             //
+            //
+            // do not pass any records with an ID of 1 or 2 as they were the seed records
+            //
             using (var Context = new ContactContext())
             {
                 var contactRecord = Context.Contact
-                    .Where(c => c.ID == c.EmailAddress.ID)
+                    .Where(c => c.ID == c.EmailAddress.ID && c.ID > 2)
                     .Select(c => new ContactPassData
                     {
                         passedID = c.ID,
@@ -130,10 +167,13 @@ namespace CodingChallengeV4.Controllers
             //             and the contactRecord list is complete, I copy the completed list into PassList.
             //             PassList is then returned to the View.
             //
+            //
+            // do not pass any records with an ID of 1 or 2 as they were the seed records
+            //
             using (var Context = new ContactContext())
             {
                 var contactRecord = Context.Contact
-                    .Where(c => c.ID == c.EmailAddress.ID)
+                    .Where(c => c.ID == c.EmailAddress.ID && c.ID > 2)
                     .Select(c => new ContactPassData
                     {
                         passedID = c.ID,
