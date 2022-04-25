@@ -6,7 +6,7 @@
 
 <div id="ajaxgrid">
     @{
-        WebGrid grid = new WebGrid(source: Model, canPage: true, canSort: false, ajaxUpdateContainerId: "ajaxgrid");
+        WebGrid grid = new WebGrid(source: Model, canPage: false, canSort: false, ajaxUpdateContainerId: "ajaxgrid");
     }
 </div>
 
@@ -21,6 +21,9 @@
 <!-- add thids links for the error message-->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/1.3.1/css/toastr.css" />
 <script src="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/1.3.1/js/toastr.js"></script>
+
+<script src="~/Scripts/jquery.quicksearch.js" type="text/javascript"></script>
+
 <style type="text/css">
 
     .Grid {
@@ -28,27 +31,30 @@
         border-collapse: collapse;
     }
 
-    .Grid th {
-        background-color: #F7F7F7;
-        font-weight: bold;
-    }
+        .Grid th {
+            background-color: #F7F7F7;
+            font-weight: bold;
+        }
 
-    .Grid th, .Grid td {
-        padding: 5px;
-        width: 150px;
-        border: 1px solid #ccc;
-    }
+        .Grid th, .Grid td {
+            padding: 5px;
+            width: 150px;
+            border: 1px solid #ccc;
+        }
 
-    .Grid, .Grid table td {
-        border: 0px solid #ccc;
-    }
+        .Grid, .Grid table td {
+            border: 0px solid #ccc;
+        }
 
-    .Grid th a, .Grid th a:visited {
-        color: #333;
-    }
+            .Grid th a, .Grid th a:visited {
+                color: #333;
+            }
 </style>
 <h2>Update All Contacts</h2>
-
+<div id="filterDiv">
+    Search for <input class="form-control" type="text" id="txtSearchFor" />
+</div>
+<br /><br />
 @grid.GetHtml(
     htmlAttributes: new { @id = "WebGrid", @class = "Grid" },
     columns: grid.Columns(
@@ -59,21 +65,14 @@ grid.Column(header: "eMail Address", format:@<text><div class="edit" data-id="@i
 grid.Column(header: "eMail Type", format:@<text><div class="edit" data-id="@item.passedID" data-propertyname="passedeMailTypeString">@item.passedeMailTypeString</div></text>)
 )
 )
-<div id="dialog" style="display: none;">
-</div>
 
-<div id="saveData" style="display: none;">
-    <input type="text" id="saveRow" value="" />
-    <input type="text" id="saveID" value="" />
-    <input type="text" id="saveFirstName" value="" />
-    <input type="text" id="saveLastName" value="" />
-    <input type="text" id="saveEmailAddress" value="" />
-    <input type="text" id="saveEmailAddressType" value="" />
+<div id="dialog" style="display: none;">
 </div>
 
 <script>
 
     $(document).ready(function () {
+
         $('#toast-container').find('.toast-top-center').removeClass('.toast-top-center');
         toastr.options = {
             "closeButton": true,
@@ -93,6 +92,17 @@ grid.Column(header: "eMail Type", format:@<text><div class="edit" data-id="@item
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut"
         }
+
+        //
+        // allow the user to filter the grid.
+        //
+        $("#txtSearchFor").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#WebGrid tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+
         //
         // This will handle the double click on any grid element.  If the user clicks on a grid element,
         // we need to determine which row the user clicked on.  Grab each data element from that grid row
@@ -120,7 +130,7 @@ grid.Column(header: "eMail Type", format:@<text><div class="edit" data-id="@item
             $.ajax({
                 url: "/Home/Details",
                 type: "POST",
-                data: { ID: ID, FirstName: "", LastName: "", EmailAddress: "", EmailType: ""},
+                data: { ID: ID, FirstName: "", LastName: "", EmailAddress: "", EmailType: "" },
                 dataType: "html",
                 success: function (result) {
                     $('#dialog').html(result);
