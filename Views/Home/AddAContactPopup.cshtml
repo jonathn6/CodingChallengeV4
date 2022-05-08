@@ -1,15 +1,9 @@
 ﻿
-@{
-    ViewBag.Title = "Add A Contact";
-}
-<!-- jQuery library -->
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
-
 <!-- Latest compiled JavaScript -->
 <!-- add thids links for the error message-->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/1.3.1/css/toastr.css" />
 <script src="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/1.3.1/js/toastr.js"></script>
+
 <h2>Add A Contact</h2>
 <div class="col-md-12">
     <div class="col-md-4"></div>
@@ -95,13 +89,10 @@
 
                             if (result.Status == "true") {
                                 toastr.success(result.ErrorMessage);
-                                clear();
-                                display();
+                                $('#addAContactPopup').dialog('close');
                             }
                             else {
                                 toastr.warning(result.ErrorMessage);
-                                clear();
-                                display();
                             }
                         }
                     });

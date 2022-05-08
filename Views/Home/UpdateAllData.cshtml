@@ -1,7 +1,7 @@
 ﻿
 @model List<CodingChallengeV4.ViewModels.ContactPassData>
 @{
-    ViewBag.Title = "UpdateAllData";
+    ViewBag.RecordCount = (Model.Count() > 0) ? Model.FirstOrDefault().passedID : 0;
 }
 
 <div id="ajaxgrid">
@@ -21,8 +21,6 @@
 <!-- add thids links for the error message-->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/1.3.1/css/toastr.css" />
 <script src="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/1.3.1/js/toastr.js"></script>
-
-<script src="~/Scripts/jquery.quicksearch.js" type="text/javascript"></script>
 
 <style type="text/css">
 
@@ -51,27 +49,45 @@
             }
 </style>
 <h2>Update All Contacts</h2>
+
 <div id="filterDiv">
     Search for <input class="form-control" type="text" id="txtSearchFor" />
 </div>
-<br /><br />
+<br />
+<br />
 @grid.GetHtml(
     htmlAttributes: new { @id = "WebGrid", @class = "Grid" },
     columns: grid.Columns(
 grid.Column(header: "", format:@<text><div class="edit" data-id="@item.passedID" data-propertyname="passedID">@item.passedID</div></text>),
 grid.Column(header: "First Name", format:@<text><div class="edit" data-id="@item.passedID" data-propertyname="passedfName">@item.passedfName</div></text>),
 grid.Column(header: "Last Name", format:@<text><div class="edit" data-id="@item.passedID" data-propertyname="passedlName">@item.passedlName</div></text>),
+grid.Column(header: "Display Name", format:@<text><div class="edit" readonly data-id="@item.passedDName" data-propertyname="passedDName">@item.passedDName</div></text>),
 grid.Column(header: "eMail Address", format:@<text><div class="edit" data-id="@item.passedID" data-propertyname="passedeMail">@item.passedeMail</div></text>),
 grid.Column(header: "eMail Type", format:@<text><div class="edit" data-id="@item.passedID" data-propertyname="passedeMailTypeString">@item.passedeMailTypeString</div></text>)
 )
 )
 
+@{ 
+    int letterCount = 0;
+
+    foreach (var record in Model) {
+        letterCount += record.passedfName.Length;
+    }
+
+}
+
+
+<div>
+    <label>Number of letters in all the first names: @letterCount</label>
+</div>
 <div id="dialog" style="display: none;">
 </div>
 
 <script>
 
     $(document).ready(function () {
+
+
 
         $('#toast-container').find('.toast-top-center').removeClass('.toast-top-center');
         toastr.options = {

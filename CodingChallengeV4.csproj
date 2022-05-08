@@ -354,9 +354,10 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\ViewAllData.cshtml" />
-    <Content Include="Views\Home\AddAContact.cshtml" />
     <Content Include="Views\Home\UpdateAllData.cshtml" />
     <Content Include="Views\Home\Details.cshtml" />
+    <Content Include="Views\Home\AddAContactPopup.cshtml" />
+    <Content Include="Views\Home\AddAContact.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -73,9 +73,9 @@ namespace CodingChallengeV4.Models
         public ContactContext() : base()
         {
 
-            Database.SetInitializer(new DBInitializer());
-            Database.SetInitializer<ContactContext>(new DropCreateDatabaseAlways<ContactContext>());
-            Database.SetInitializer<ContactContext>(new DBInitializer());
+            //Database.SetInitializer(new DBInitializer());
+            //Database.SetInitializer<ContactContext>(new DropCreateDatabaseAlways<ContactContext>());
+            //Database.SetInitializer<ContactContext>(new DBInitializer());
         }
 
         public DbSet<Contact> Contact { get; set; }

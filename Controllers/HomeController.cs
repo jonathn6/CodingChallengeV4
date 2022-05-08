@@ -104,6 +104,7 @@ namespace CodingChallengeV4.Controllers
                         passedID = c.ID,
                         passedfName = c.FirstName,
                         passedlName = c.LastName,
+                        passedDName = c.FirstName.Trim() + " " + c.LastName.Trim(),
                         passedeMail = c.EmailAddress.EmailAddress1,
                         passedeMailType = c.EmailAddress.EmailType,
                         passedeMailTypeString = (c.EmailAddress.EmailType == 0) ? "Personal" : "Business"
@@ -137,24 +138,40 @@ namespace CodingChallengeV4.Controllers
             //             PassList is then returned to the Partial View.
             //
 
+
             int passedID = int.Parse(model.ID);
-            using (var Context = new ContactContext())
+            List<ContactPassData> PassList = new List<ContactPassData>();
+
+            if (passedID == 0)
             {
-                var contactRecord = Context.Contact
-                    .Where(c => c.ID == passedID)
-                    .Select(c => new ContactPassData
-                    {
-                        passedID = c.ID,
-                        passedfName = c.FirstName,
-                        passedlName = c.LastName,
-                        passedeMail = c.EmailAddress.EmailAddress1,
-                        passedeMailType = c.EmailAddress.EmailType,
-                        passedeMailTypeString = (c.EmailAddress.EmailType == 0) ? "Personal" : "Business"
-                    }).ToList();
-                List<ContactPassData> PassList = new List<ContactPassData>();
-                PassList = contactRecord;
-                return PartialView("Details", PassList);
+                ContactPassData emptyRecord = new ContactPassData();
+                emptyRecord.passedID = 0;
+                emptyRecord.passedfName = "";
+                emptyRecord.passedlName = "";
+                emptyRecord.passedeMail = "";
+                emptyRecord.passedeMailType = 0;
+                emptyRecord.passedeMailTypeString = "Personal";
+                PassList.Add(emptyRecord);
+            } else
+            {
+                using (var Context = new ContactContext())
+                {
+                    var contactRecord = Context.Contact
+                        .Where(c => c.ID == passedID)
+                        .Select(c => new ContactPassData
+                        {
+                            passedID = c.ID,
+                            passedfName = c.FirstName,
+                            passedlName = c.LastName,
+                            passedeMail = c.EmailAddress.EmailAddress1,
+                            passedeMailType = c.EmailAddress.EmailType,
+                            passedeMailTypeString = (c.EmailAddress.EmailType == 0) ? "Personal" : "Business"
+                        }).ToList();
+                    PassList = contactRecord;
+                }
+
             }
+            return PartialView("Details", PassList);
         }
 
         //

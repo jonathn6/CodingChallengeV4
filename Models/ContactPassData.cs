@@ -15,6 +15,7 @@ namespace CodingChallengeV4.ViewModels
         public int passedID { get; set; }
         public string passedfName { get; set; }
         public string passedlName { get; set; }
+        public string passedDName { get; set; }
         public string passedeMail { get; set; }
         public int passedeMailType { get; set; }
         public string passedeMailTypeString { get; set; }

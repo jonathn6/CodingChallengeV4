@@ -80,5 +80,15 @@
 
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
-</body>
-</html>
+
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            var bootstrapButton = $.fn.button.noConflict()
+            $.fn.bootstrapBtn = bootstrapButton;
+        })
+
+    </script>
+</body >
+</html >
